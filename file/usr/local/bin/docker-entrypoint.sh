@@ -33,7 +33,8 @@ test -d /var/lib/mysql/mysql || /usr/libexec/mariadb-prepare-db-dir mysql mysql
 
 sleep 3
 
-LOCK_FILE=/var/log/docker_init.lock
+mkdir -p /var/lock/docker
+LOCK_FILE=/var/lock/docker/xxl-job_init.lock
 
 if [ -f ${LOCK_FILE} ]; then
     echo "`date "+%Y-%m-%d %H:%M:%S"` [信息] 跳过初始化MySQL密码和初始化XXLJOB数据库"

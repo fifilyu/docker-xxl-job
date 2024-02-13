@@ -43,6 +43,7 @@ docker run -d \
     -v /data/xxl-job/executor/etc/logback.xml:/var/lib/xxl-job/executor/etc/logback.xml \
     -v /data/xxl-job/executor/var/log:/var/log/xxl-job/executor \
     -v /data/xxl-job/mysql/data:/var/lib/mysql \
+    -v /data/xxl-job/lock:/var/lock/docker \
     -h xxl-job \
     --name xxl-job \
     fifilyu/xxl-job:latest
