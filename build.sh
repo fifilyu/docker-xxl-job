@@ -1,0 +1,1 @@
+docker buildx build -t fifilyu/xxl-job:latest .
