@@ -21,10 +21,9 @@ docker buildx build -t fifilyu/xxl-job:latest .
 
 ```bash
 sudo mkdir -p /data/xxl-job/admin/var/log
-sudo mkdir -p /data/xxl-job/executor/var/log
+sudo mkdir -p /data/xxl-job/executor/var/log /data/xxl-job/executor/workspace
 sudo mkdir -p /data/xxl-job/mysql
 sudo chmod -R 777 /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/mysql
-sudo chmod -R 777 /data/xxl-job/admin/etc/application.properties /data/xxl-job/admin/etc/logback.xml /data/xxl-job/executor/etc/application.properties /data/xxl-job/executor/etc/logback.xml
 ```
 
 ### 3.2 启动带目录映射的容器
@@ -39,6 +38,7 @@ docker run -d \
     -v /data/xxl-job/admin/etc/application.properties:/var/lib/xxl-job/admin/etc/application.properties \
     -v /data/xxl-job/admin/etc/logback.xml:/var/lib/xxl-job/admin/etc/logback.xml \
     -v /data/xxl-job/admin/var/log:/var/log/xxl-job/admin \
+    -v /data/xxl-job/executor/workspace:/var/lib/xxl-job/executor/workspace \
     -v /data/xxl-job/executor/etc/application.properties:/var/lib/xxl-job/executor/etc/application.properties \
     -v /data/xxl-job/executor/etc/logback.xml:/var/lib/xxl-job/executor/etc/logback.xml \
     -v /data/xxl-job/executor/var/log:/var/log/xxl-job/executor \
@@ -53,8 +53,11 @@ docker run -d \
 
 ```bash
 # 目录降级读写权限
-sudo chmod 755 /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/mysql /data/xxl-job/mysql/data
-sudo chmod 755 /data/xxl-job/admin/etc/application.properties /data/xxl-job/admin/etc/logback.xml /data/xxl-job/executor/etc/application.properties /data/xxl-job/executor/etc/logback.xml
+sudo chmod 755 /data/xxl-job/admin/var/log \
+    /data/xxl-job/executor/var/log \
+    /data/xxl-job/executor/var/log/jobhandler \
+    /data/xxl-job/mysql \
+    /data/xxl-job/mysql/data
 
 # 使用容器内的xxl-job用户和组的id重置目录用户组
 admin_uid=$(docker exec -it xxl-job bash -c 'id -u xxl-job-admin' | tr -d '\r')
@@ -63,12 +66,12 @@ sudo chown -R ${admin_uid}:${admin_gid} /data/xxl-job/admin/var/log
 
 executor_uid=$(docker exec -it xxl-job bash -c 'id -u xxl-job-executor' | tr -d '\r')
 executor_gid=$(docker exec -it xxl-job bash -c 'id -g xxl-job-executor' | tr -d '\r')
-sudo chown -R ${executor_uid}:${executor_gid} /data/xxl-job/executor/var/log
+sudo chown -R ${executor_uid}:${executor_gid} /data/xxl-job/executor/var/log /data/xxl-job/executor/workspace
 
 # 确认重置效果
-ls -dln /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/mysql/data
+ls -dln /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/executor/var/log/jobhandler /data/xxl-job/mysql/data
 
-ls -aln /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/mysql/data
+ls -aln /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/executor/var/log/jobhandler /data/xxl-job/mysql/data
 ```
 
 ### 3.4 重启容器

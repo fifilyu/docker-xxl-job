@@ -32,7 +32,7 @@ RUN useradd --home-dir /var/lib/xxl-job/admin --no-create-home --shell /sbin/nol
 RUN mkdir -p /var/log/xxl-job/admin
 RUN chown -R xxl-job-admin:xxl-job-admin /var/log/xxl-job/admin
 
-RUN useradd --home-dir /var/lib/xxl-job/executor --no-create-home --shell /sbin/nologin --comment "XXL-JOB Executor" xxl-job-executor
+RUN useradd --home-dir /var/lib/xxl-job/executor --no-create-home --shell /bin/bash --comment "XXL-JOB Executor" xxl-job-executor
 RUN mkdir -p /var/log/xxl-job/executor/jobhandler
 RUN chown -R xxl-job-executor:xxl-job-executor /var/lib/xxl-job/executor
 
