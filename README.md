@@ -1,6 +1,6 @@
 # docker-xxl-job
 
-分布式任务调度平台（XXL-JOB） Docker镜像
+分布式任务调度平台（XXL-JOB） Docker 镜像
 
 ## 一、构建镜像
 
@@ -12,8 +12,8 @@ docker buildx build -t fifilyu/xxl-job:latest .
 
 ## 二、开放端口
 
-* sshd->22
-* xxl-job->8080
+- sshd->22
+- xxl-job->8080
 
 ## 三、启动容器（数据分离）
 
@@ -22,8 +22,8 @@ docker buildx build -t fifilyu/xxl-job:latest .
 ```bash
 sudo mkdir -p /data/xxl-job/admin/var/log
 sudo mkdir -p /data/xxl-job/executor/var/log /data/xxl-job/executor/workspace
-sudo mkdir -p /data/xxl-job/mysql
-sudo chmod -R 777 /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/mysql
+sudo mkdir -p /data/xxl-job/mysql/data
+sudo chmod -R 777 /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/mysql/data /data/xxl-job/admin/etc/application.properties /data/xxl-job/executor/etc/application.properties
 ```
 
 ### 3.2 启动带目录映射的容器
@@ -51,39 +51,16 @@ docker run -d \
 
 ### 3.3 重置目录权限
 
-```bash
-# 目录降级读写权限
-sudo chmod 755 /data/xxl-job/admin/var/log \
-    /data/xxl-job/executor/var/log \
-    /data/xxl-job/executor/var/log/jobhandler \
-    /data/xxl-job/mysql \
-    /data/xxl-job/mysql/data
+由 `docker-entrypoint.sh` 在容器启动时重置
 
-# 使用容器内的xxl-job用户和组的id重置目录用户组
-admin_uid=$(docker exec -it xxl-job bash -c 'id -u xxl-job-admin' | tr -d '\r')
-admin_gid=$(docker exec -it xxl-job bash -c 'id -g xxl-job-admin' | tr -d '\r')
-sudo chown -R ${admin_uid}:${admin_gid} /data/xxl-job/admin/var/log
-
-executor_uid=$(docker exec -it xxl-job bash -c 'id -u xxl-job-executor' | tr -d '\r')
-executor_gid=$(docker exec -it xxl-job bash -c 'id -g xxl-job-executor' | tr -d '\r')
-sudo chown -R ${executor_uid}:${executor_gid} /data/xxl-job/executor/var/log /data/xxl-job/executor/workspace
-
-# 确认重置效果
-ls -dln /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/executor/var/log/jobhandler /data/xxl-job/mysql/data
-
-ls -aln /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/executor/var/log/jobhandler /data/xxl-job/mysql/data
-```
-
-### 3.4 重启容器
-
-*必须重启容器，否则容器无法读写映射目录*
+_必须重启容器，否则容器无法读写映射目录_
 
 ```bash
 docker restart xxl-job
 ```
 
-## 四、访问XXL-JOB
+## 四、访问 XXL-JOB
 
-* 访问地址：http://localhost:1808/xxl-job-admin
-* 用户名称： admin
-* 用户密码： 123456
+- 访问地址：http://localhost:1808/xxl-job-admin
+- 用户名称： admin
+- 用户密码： 123456
