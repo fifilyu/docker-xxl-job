@@ -34,7 +34,7 @@ chown -R xxl-job-admin:xxl-job-admin /var/log/xxl-job/admin
 # 为支持容器映射目录，只在启动时初始化数据目录和导入SQL文件
 test -d /var/lib/mysql/mysql || /usr/libexec/mariadb-prepare-db-dir mysql mysql
 
-/usr/sbin/runuser -u mysql -g mysql -- /usr/libexec/mariadbd --basedir=/usr &
+/usr/libexec/mariadbd --basedir=/usr --user=mysql &
 
 sleep 3
 
@@ -93,7 +93,7 @@ echo "$(date "+%Y-%m-%d %H:%M:%S") [信息] XXL-JOB Executor启动中......"
 /usr/sbin/runuser -u xxl-job-executor -g xxl-job-executor -- /usr/bin/java -Dlogback.configurationFile=​/var/lib/xxl-job/executor/etc/logback.xml -Dspring.config.location=/var/lib/xxl-job/executor/etc/application.properties -jar /var/lib/xxl-job/executor/bin/xxl-job-executor-springboot-latest.jar &
 
 # 目录降级读写权限，主要降级宿主映射卷
-chmod 755 /var/log/xxl-job/admin /var/log/xxl-job/executor /var/log/xxl-job/executor/jobhandler /var/lib/mysql
+chmod 755 /var/log/xxl-job/admin /var/log/xxl-job/executor /var/log/xxl-job/executor/jobhandler /var/lib/mysql /var/lock/docker
 chmod 644 /var/lib/xxl-job/admin/etc/application.properties /var/lib/xxl-job/executor/etc/application.properties
 
 # 保持前台运行，不退出

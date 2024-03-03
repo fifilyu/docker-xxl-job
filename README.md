@@ -23,7 +23,7 @@ docker buildx build -t fifilyu/xxl-job:latest .
 sudo mkdir -p /data/xxl-job/admin/var/log
 sudo mkdir -p /data/xxl-job/executor/var/log /data/xxl-job/executor/workspace
 sudo mkdir -p /data/xxl-job/mysql/data
-sudo chmod -R 777 /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/mysql/data /data/xxl-job/admin/etc/application.properties /data/xxl-job/executor/etc/application.properties
+sudo chmod -R 777 /data/xxl-job/admin/var/log /data/xxl-job/executor/var/log /data/xxl-job/mysql/data /data/xxl-job/admin/etc/application.properties /data/xxl-job/executor/etc/application.properties /data/xxl-job/lock
 ```
 
 ### 3.2 启动带目录映射的容器
