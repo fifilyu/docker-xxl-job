@@ -26,6 +26,11 @@ PW=$(pwgen -1 20)
 echo "$(date +"%Y-%m-%d %H:%M:%S") [信息] Root用户密码：${PW}"
 echo "root:${PW}" | chpasswd
 
+# 使用容器内部的用户组重置目录权限：解决容器启动映射卷导致的宿主权限和容器权限不同步问题
+chown -R mysql:mysql /var/log/mysql
+chown -R xxl-job-executor:xxl-job-executor /var/log/xxl-job/executor
+chown -R xxl-job-admin:xxl-job-admin /var/log/xxl-job/admin
+
 # 为支持容器映射目录，只在启动时初始化数据目录和导入SQL文件
 test -d /var/lib/mysql/mysql || /usr/libexec/mariadb-prepare-db-dir mysql mysql
 
@@ -87,7 +92,7 @@ sleep 10
 echo "$(date "+%Y-%m-%d %H:%M:%S") [信息] XXL-JOB Executor启动中......"
 /usr/sbin/runuser -u xxl-job-executor -g xxl-job-executor -- /usr/bin/java -Dlogback.configurationFile=​/var/lib/xxl-job/executor/etc/logback.xml -Dspring.config.location=/var/lib/xxl-job/executor/etc/application.properties -jar /var/lib/xxl-job/executor/bin/xxl-job-executor-springboot-latest.jar &
 
-# 目录降级读写权限
+# 目录降级读写权限，主要降级宿主映射卷
 chmod 755 /var/log/xxl-job/admin /var/log/xxl-job/executor /var/log/xxl-job/executor/jobhandler /var/lib/mysql
 chmod 644 /var/lib/xxl-job/admin/etc/application.properties /var/lib/xxl-job/executor/etc/application.properties
 
